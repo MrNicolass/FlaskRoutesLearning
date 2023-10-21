@@ -2,6 +2,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for, jso
 from flask_sqlalchemy import SQLAlchemy #Biblioteca responsável pelo banco de dados
 import ujson #Biblioteca "estilziada" para trabalhar com dados em JSON
 import time #Biblioteca utilizada para calcular o tempo das execuções
+import heapq #Biblioteca para implementar uma fila de prioridades
 
 #Variável/instância para acessar o Flask de forma mais fácil
 app = Flask(__name__, template_folder='Pages')
@@ -23,11 +24,13 @@ def home():
 def crud():
     #Função try para tentar criar e retornar os registros no banco e calcular o tempo de execução
     try:
+        #Calcula o tempo de execuação da função de criação de pessoas e da query de busca
         begin = time.time()
         Persons.new_persons()
+        queryPersons = Persons.toJSON()
         end = time.time()
-        execution_time = (end - begin) * 1000 #Cálcula o tempo de execução e transforma em microsegundos
-        return f"{execution_time}\n{Persons.toJSON()}"
+        execution_time = (end - begin) * 1000
+        return f"{execution_time} {queryPersons}"
     #Função except para caso aconteça algum erro, apresenta mensagem na página home
     except:
         flash(f"Erro na execução", "Error")
@@ -43,15 +46,39 @@ def order():
         if not textareaData:
             flash("Vetor não digitado!", "Error")
         else:
-            begin = time.time()
             #Transforma os números digitados em uma lista, depois aplica a função map para transformar cada número da string que for divido por vírgula pela função split em números inteiros
             vetor = list(map(int, textareaData.split(",")))
-            #Ordena os números com a função Merge Sort
+            #Ordena os números com a função Merge Sort e calcula o tempo de execução
+            begin = time.time()
             inOrder = merge_sort(vetor)
             end = time.time()
+            #Transforma vetor ordenado em um JSON
+            success_json = ujson.dumps(inOrder)
             execution_time = (end - begin) * 1000 #Cálcula o tempo de execução e transforma em microsegundos
-            flash(f"{inOrder} Tempo de execução: {execution_time}", "Sucesso")
+            flash(f"{success_json} Tempo de execução: {execution_time}", "Sucesso")
     return render_template("order.html")
+
+#Rota de execução da tarefa três -> Encontrar o menor caminho dentro de um graph
+@app.route("/graph", methods=['GET', 'POST'])
+def graph():
+    #Servidor verifica se está recebendo algo com o método POST
+    if request.method == "POST":
+        textareaData = request.form["graph"]
+        #Verifica se foi recebido algo, se não for apresenta um erro
+        if not textareaData:
+            flash("Grafo não digitado!", "Error")
+        else:
+            #Transforma os valores digitados de String para JSON
+            graph = ujson.loads(textareaData)
+            #Executado o algoritmo de dijkstra para encontrar o menor caminho no grafo, passando o grafo e o inicio e calcula o tempo de execução
+            begin = time.time()
+            shortestWay = dijkstra(graph, "A")
+            end = time.time()
+            #Transforma resultado do grafo em JSON
+            success_json = ujson.dumps(shortestWay)
+            execution_time = (end - begin) * 1000
+            flash(f"{success_json} Tempo de execução: {execution_time}", "Sucesso")
+    return render_template("graph.html")
 
 #---</Rotas de navegação>---
 
@@ -74,7 +101,7 @@ class Persons(db.Model):
 
     #Função para realizar criação das pessoas/popular banco de dados
     def new_persons():
-        for i in range(100):
+        for i in range(10000):
             persun = Persons(
                 nome=f"Nicolas{i+1}", #Adiciona uma numeração nos nomes para diferenciação
                 email="nicolas@catolica.com",
@@ -128,6 +155,26 @@ def merge(esquerda, direita):
     resultado.extend(direita[j:])
     
     return resultado
+
+def dijkstra(graph, begin):
+    distance = {v: float('infinity') for v in graph}
+    distance[begin] = 0
+    pq = [(0, begin)]
+    
+    while len(pq) > 0:
+        current_distance, current_vertex = heapq.heappop(pq)
+        
+        if current_distance > distance[current_vertex]:
+            continue
+        
+        for neighbor, weight in graph[current_vertex].items():
+            dist = current_distance + weight
+            
+            if dist < distance[neighbor]:
+                distance[neighbor] = dist
+                heapq.heappush(pq, (dist, neighbor))
+    
+    return distance
 
 #---</Classes e funções do programa>---
 

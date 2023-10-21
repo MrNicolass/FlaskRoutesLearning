@@ -3,11 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Graph</title>
 </head>
 <body>
+    <!--Laço de repetição for fetio em Jinja2 para percorrer a função que pega e armazena mensagens enviadas para a URL atual-->
+    {%- for mensagem in get_flashed_messages() %}
+        {{ mensagem }}
+    {%- endfor %}    
+    <style>
+        textarea {
+            min-width: 25vw;
+            max-width: 40vw;
+            min-height: 25vh;
+            max-height: 40vh;
+        }
+    </style>
     <h3>
         <a href = "../">Home</a>
     </h3>
+    <form action="{{ request.path }}" method="post">
+        <label>Digite o grafo</label><br>
+        <textarea name="graph"></textarea><br>
+        <input type="submit" value="Enviar" />
+    </form>
 </body>
 </html>
