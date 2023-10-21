@@ -6,6 +6,7 @@
     <title>Incio</title>
 </head>
 <body>
+    <!--Laço de repetição for fetio em Jinja2 para percorrer a função que pega e armazena mensagens enviadas para a URL atual-->
     {%- for mensagem in get_flashed_messages() %}
          {{ mensagem }}
     {%- endfor %}
