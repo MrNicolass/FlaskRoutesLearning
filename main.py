@@ -8,9 +8,55 @@ app = Flask(__name__, template_folder='Pages')
 #Conexão com o banco de dados e sua chave de segurança
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Persons.db'
 app.config["SECRET_KEY"] = "random string"
-
-#---Instância do banco/Classe Pessoas---
+#Instância do banco
 db = SQLAlchemy(app)
+
+#---<Rotas de navegação>---
+
+#Rota padrão/inicial
+@app.route("/")
+def home():
+    return render_template('index.html') #Carrega arquivo index/home html com as rotas e demais envios de dados
+
+#Rota de execução da tarefa dois -> Criação de dez mil registros no SQLite
+@app.route("/crud")
+def crud():
+    #Função try para tentar criar e retornar os registros no banco e calcular o tempo de execução
+    try:
+        begin = time.time()
+        Persons.new_persons()
+        end = time.time()
+        execution_time = (end - begin) * 1000 #Cálcula o tempo de execução e transforma em microsegundos
+        return f"{execution_time}\n{Persons.toJSON()}"
+    #Função except para caso aconteça algum erro, apresenta mensagem na página home
+    except:
+        flash(f"Erro na execução", "Error")
+        return render_template('index.html')
+
+#Rota de execução da tarefa um -> Ordenação do array ordenação utilizando Merge Sort
+@app.route("/order", methods=['GET', 'POST'])
+def order():
+    #Servidor verifica se está recebendo algo com o método POST
+    if request.method == "POST":
+        textareaData = request.form["vetor"]
+        #Verifica se foi recebido algo, se não for apresenta um erro
+        if not textareaData:
+            flash("Vetor não digitado!", "Error")
+        else:
+            begin = time.time()
+            #Transforma os números digitados em uma lista, depois aplica a função map para transformar cada número da string que for divido por vírgula pela função split em números inteiros
+            vetor = list(map(int, textareaData.split(",")))
+            #Ordena os números com a função Merge Sort
+            inOrder = merge_sort(vetor)
+            end = time.time()
+            execution_time = (end - begin) * 1000 #Cálcula o tempo de execução e transforma em microsegundos
+            flash(f"{inOrder} Tempo de execução: {execution_time}", "Sucesso")
+    return render_template("order.html")
+
+#---</Rotas de navegação>---
+
+#---<Classes e funções do programa>---
+
 class Persons(db.Model):
     #Campos Globais da classe -> Colunas da tabela
     id = db.Column('person_id', db.Integer, primary_key = True)
@@ -56,30 +102,6 @@ class Persons(db.Model):
             'notes': self.notes
             }
 
-#---<Rotas de navegação>---
-
-#Rota padrão/inicial
-@app.route("/")
-def home():
-    return render_template('index.html') #Carrega arquivo index/home html com as rotas e demais envios de dados
-
-#Rota pare execução da tarefa dois -> Criação de dez mil registros no SQLite
-@app.route("/crud")
-def crud():
-    #Função try para tentar criar e retornar os registros no banco e calcular o tempo de execução
-    try:
-        begin = time.time()
-        Persons.new_persons()
-        end = time.time()
-        execution_time = (end - begin) * 1000 #Cálcula o tempo de execução e transforma em microsegundos
-        return f"{execution_time}\n{Persons.toJSON()}"
-    #Função except para caso aconteça algum erro, apresenta mensagem na página home
-    except:
-        flash(f"Erro na execução", "Error")
-        return render_template('index.html')
-    
-#---<Rotas de navegação/>---
-
 def merge_sort(lista):
     if len(lista) <= 1:
         return lista
@@ -106,6 +128,8 @@ def merge(esquerda, direita):
     resultado.extend(direita[j:])
     
     return resultado
+
+#---</Classes e funções do programa>---
 
 if __name__ == '__main__':
     app.app_context().push()

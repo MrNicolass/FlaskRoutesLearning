@@ -6,8 +6,25 @@
     <title>Merge Sort</title>
 </head>
 <body>
+    <!--Laço de repetição for fetio em Jinja2 para percorrer a função que pega e armazena mensagens enviadas para a URL atual-->
+    {%- for mensagem in get_flashed_messages() %}
+        {{ mensagem }}
+    {%- endfor %}
+    <style>
+        textarea {
+            min-width: 10vw;
+            max-width: 15vw;
+            min-height: 10vh;
+            max-height: 15vh;
+        }
+    </style>
     <h3>
         <a href = "../">Home</a>
     </h3>
+    <form action = "{{ request.path }}" method = "post">
+        <label>Digite o vetor</label><br>
+        <textarea name="vetor"></textarea><br>
+        <input type = "submit" value = "Enviar" />
+    </form>
 </body>
 </html>
