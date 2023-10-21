@@ -10,6 +10,6 @@
 </ul>
 
 <h2>Flask web program diagram</h2>
-![alt text](https://github.com/MrNicolass/[FlaskRoutesLearning]/blob/main/programDiagram.jpeg?raw=true)
+![Diagram](https://github.com/MrNicolass/FlaskRoutesLearning/blob/main/programDiagram.jpeg)
 
  <Strong>(All the code comments were written in brazilian portuguese.)</strong>
