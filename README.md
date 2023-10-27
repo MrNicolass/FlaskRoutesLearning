@@ -1,6 +1,7 @@
 # FlaskRoutesLearning
  A project made with Flask (python framework for web) with three tests: Merge Sort ordering, CRUD and the fastest way in a graph.<br>
  The project above was created to learn how Server-Side programming and some of python frameworks works. Classes were taught by professor Andrei Carniel at University Católica de Jaraguá do Sul - Santa catarina, Brazil.<br>
+ <Strong>(All the code comments were written in brazilian portuguese.)</strong>
 
 <h2>Libraries used</h2>
 <ul>
@@ -10,6 +11,4 @@
 </ul>
 
 <h2>Flask web program diagram</h2>
-![Diagram](https://github.com/MrNicolass/FlaskRoutesLearning/blob/main/programDiagram.jpeg)
-
- <Strong>(All the code comments were written in brazilian portuguese.)</strong>
+<image src='https://github.com/MrNicolass/FlaskRoutesLearning/assets/80847876/96349657-6e2c-4fb0-abcf-00abca117060'>
