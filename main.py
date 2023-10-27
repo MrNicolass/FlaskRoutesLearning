@@ -25,8 +25,8 @@ def crud():
     #Função try para tentar criar e retornar os registros no banco e calcular o tempo de execução
     try:
         #Calcula o tempo de execuação da função de criação de pessoas e da query de busca
-        begin = time.time()
         Persons.new_persons()
+        begin = time.time()
         queryPersons = Persons.toJSON()
         end = time.time()
         execution_time = (end - begin) * 1000
@@ -68,7 +68,7 @@ def graph():
         if not textareaData:
             flash("Grafo não digitado!", "Error")
         else:
-            #Transforma os valores digitados de String para JSON
+            #Transforma dados em JSON para dados planos para Python conseguir ler
             graph = ujson.loads(textareaData)
             #Executado o algoritmo de dijkstra para encontrar o menor caminho no grafo, passando o grafo e o inicio e calcula o tempo de execução
             begin = time.time()
